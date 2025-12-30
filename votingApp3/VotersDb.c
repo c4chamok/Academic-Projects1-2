@@ -48,12 +48,12 @@ void votersInit() {
      
 }
 
-Voter getVoterById(int id) {
+Voter *getVoterById(int id) {
     for (size_t i = 0; i < votersListSize; i++) {
         if (votersList[i].id == id) {
-            return votersList[i];
+            return &votersList[i];  // return address
         }
     }
-    printf("Voter with ID=%d not found.\n", id);
+    return NULL;  // NOT FOUND
 }
 

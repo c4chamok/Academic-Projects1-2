@@ -9,11 +9,14 @@ void getCandidatesList() {
     candidatesListSize = 0;
     FILE *fpr = fopen(candidateFile, "r");
     int i = 0;
-    while(fscanf(fpr, "%d | %[^\n]\n", &v.id, v.name) == 2) { 
+    printf("Loading candidates from file...\n");
+    while(fscanf(fpr, "%d | %[^|] | %d\n", &v.id, v.name, &v.voterId) == 3) { 
+        printf("Read candidate: %d | %s | %d\n", v.id, v.name, v.voterId);
         candidatesList[i] = v;
         candidatesListSize++;
         i++;
     }
+    printf("Total candidates loaded: %d\n", candidatesListSize);
     fclose(fpr);
 }
 
@@ -24,11 +27,20 @@ void insertCandidate(int voterId) {
     } else {
         c.id = candidatesList[candidatesListSize - 1].id + 1;
     }
-    Voter v = getVoterById(voterId);
-    strcpy(c.name, v.name);
+    Voter *v = getVoterById(voterId);
+    if (v == NULL) {
+        printf("Error: Voter ID %d not found. Cannot add candidate.\n", voterId);
+        return;
+    }
+    Candidate *existedCand = getCandidateById(voterId);
+    if (existedCand != NULL) {
+        printf("Error: Voter ID %d is already a candidate. Cannot add again.\n", voterId);
+        return;
+    }
+    strcpy(c.name, (*v).name);
 
     FILE *fp = fopen(candidateFile, "a");
-    fprintf(fp, "%d | %s | %s \n", c.id, c.name, voterId);
+    fprintf(fp, "%d | %s | %d \n", c.id, c.name, voterId);
     candidatesList[candidatesListSize] = c;
     candidatesListSize++;
     fclose(fp);
@@ -46,4 +58,13 @@ void candidatesInit() {
     }
     fclose(fp);
     getCandidatesList();
+}
+
+Candidate *getCandidateById(int id) {
+    for (size_t i = 0; i < candidatesListSize; i++) {
+        if (candidatesList[i].id == id) {
+            return &candidatesList[i];  // return address
+        }
+    }
+    return NULL;  // NOT FOUND
 }

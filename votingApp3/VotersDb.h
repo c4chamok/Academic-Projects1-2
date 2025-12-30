@@ -14,7 +14,7 @@ extern int votersListSize;
 extern const char *voterFile;
 
 void getVotersList();
-Voter getVoterById(int id);
+Voter* getVoterById(int id);
 
 void insertVoter(char* vName) ;
 

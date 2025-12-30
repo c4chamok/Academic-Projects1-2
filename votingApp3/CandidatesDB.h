@@ -19,7 +19,7 @@ extern const char *candidateFile;
 void getCandidatesList();
 void insertCandidate(int voterId) ;
 void candidatesInit();
-
+Candidate* getCandidateById(int id);
 
 
 

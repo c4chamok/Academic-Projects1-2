@@ -5,6 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+    int isVotingActive;
+} AppState;
 
+extern AppState appState;
+
+void initializeAppState();
+void setIsVotingActive(int status);
 
 #endif
