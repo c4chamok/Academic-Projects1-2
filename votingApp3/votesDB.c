@@ -75,22 +75,19 @@ void submitVote(int voterId, int candidateId) {
     // --update votes file,
     
     if (!appState.isVotingActive) {
-        printf("Voting is not active.\n");
+        printf("\tVoting is not active.\n");
         return;
     }
     Candidate *c = getCandidateById(candidateId);
     if (c == NULL) {
-        printf("Invalid Candidate ID.\n");
+        printf("\tInvalid Candidate ID.\n");
         return;
     }
 
-    printf("sizeof votesList: %d\n", votesListSize);
     for (size_t i = 0; i < votesListSize; i++)
     {
-        printf("Checking candidate id: %d\n", votesList[i].candidateId);
         if (votesList[i].candidateId == candidateId) {
             votesList[i].voteCount += 1;
-            printf("candidate id found!!");
 
             // Update votes file
             FILE *file = fopen(voteFile, "w");
@@ -103,12 +100,12 @@ void submitVote(int voterId, int candidateId) {
             }
             fclose(file);
             addtoVotedVotersIdsList(voterId);
-            printf("Vote submitted successfully.\n");
+            printf("\tVote submitted successfully.\n");
             getchar();
             return;
         }
     }
-    printf("Vote entry for Candidate ID %d not found.\n", candidateId);
+    printf("\tVote entry for Candidate ID %d not found.\n", candidateId);
 
 }
 
@@ -133,48 +130,47 @@ void showVoteResult(){
         // --show the maximum voteCount winner,
         // --show how many people votted,
     if (appState.isVotingActive) {
-        printf("Voting is still active. Cannot show results.\n");
+        printf("\tVoting is still active. Cannot show results.\n");
         return;
     }
-    printf("\nVote Results:\n");
-    printf("Candidate ID\tVote Count\n");
-    printf("-------------------------\n");
+    printf("\n\tVote Results:\n");
+    printf("\tCandidate ID\tCandidate Name\tVote Count\n");
+    printf("\t--------------------------------------------------\n");
     int totalVotes = 0;
     int maxVotes = 0;
     Vote consideredWinners[100];
     int winnersCount = 0;
     for (size_t i = 0; i < votesListSize; i++) {
         Vote v = votesList[i];
-        printf("%d\t\t%d\n", v.candidateId, v.voteCount);
+        Candidate *c = getCandidateById(v.candidateId);
+        printf("\t%d\t\t%s\t\t%d\n", v.candidateId, c->name, v.voteCount);
         totalVotes += v.voteCount;
         if (v.voteCount == maxVotes)
         {
-            printf("same found\n");
             consideredWinners[winnersCount] = v;
             winnersCount++;
         } else if (v.voteCount > maxVotes)
         {
-            printf("greater found\n");
             maxVotes = v.voteCount;
             winnersCount = 0;
             consideredWinners[winnersCount] = v;
             winnersCount = 1;
         }
     }
-    printf("-------------------------\n");
-    printf("Total Votes Cast: %d\n", totalVotes);
-    printf("Winner(s):\n");
+    printf("\t-------------------------\n");
+    printf("\tTotal Votes Cast: %d\n", totalVotes);
+    printf("\tWinner(s):\n");
     if (winnersCount == 0 && maxVotes == 0) {
-        printf("No votes cast.\n");
+        printf("\tNo votes cast.\n");
     } else if (winnersCount == 1) {
         Candidate *winner = getCandidateById(consideredWinners[0].candidateId);
-        printf("Candidate ID: %d, Name: %s with %d votes\n", winner->id, winner->name, consideredWinners[0].voteCount);
+        printf("\tCandidate ID: %d, Name: %s with %d votes\n", winner->id, winner->name, consideredWinners[0].voteCount);
     } else {
         for (size_t i = 0; i < winnersCount; i++) {
             Candidate *winner = getCandidateById(consideredWinners[i].candidateId);
-            printf("Candidate ID: %d, Name: %s with %d votes\n", winner->id, winner->name, consideredWinners[i].voteCount);
+            printf("\tCandidate ID: %d, Name: %s with %d votes\n", winner->id, winner->name, consideredWinners[i].voteCount);
         }
-        printf("It's a tie!\n");
+        printf("\tIt's a tie!\n");
     }
 }
 
